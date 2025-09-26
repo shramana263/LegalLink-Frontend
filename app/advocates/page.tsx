@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Search, MapPin, Star, Users, MessageCircle } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -93,22 +93,20 @@ const SORT_ORDER_OPTIONS = [
 export default function AdvocatesPage() {
   const router = useRouter();
   const { user } = useAuth();
+  const searchParams = useSearchParams();
 
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // --- SEARCH/FILTER STATE AND LOGIC ---
+  // Search/filter state
   const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-
   const [selectedSpecialization, setSelectedSpecialization] = useState("all");
   const [selectedLocation, setSelectedLocation] = useState("all");
-// frontend-translation
   const [experienceLevel, setExperienceLevel] = useState("all");
   const [feeType, setFeeType] = useState("Consultation");
-  const [maxFee, setMaxFee] = useState(0);
-  const [minRating, setMinRating] = useState(0);
+  const [maxFee, setMaxFee] = useState<number>(0);
+  const [minRating, setMinRating] = useState<number>(0);
   const [sortBy, setSortBy] = useState("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
@@ -118,108 +116,6 @@ export default function AdvocatesPage() {
   const [ratingComment, setRatingComment] = useState("");
   const [selectedAdvocateId, setSelectedAdvocateId] = useState<string | null>(null);
 
-  // Debounce search input to reduce API calls
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(searchQuery.trim());
-    }, 1000);
-    return () => clearTimeout(handler);
-  }, [searchQuery]);
-
-  // Fetch advocates whenever filters or debounced search changes
-  useEffect(() => {
-    const filters: any = {};
-
-    if (debouncedSearch.length >= 2) {
-      filters.name = debouncedSearch;
-    }
-
-    if (selectedSpecialization !== "all") {
-      filters.specialization = selectedSpecialization;
-    }
-
-    if (selectedLocation !== "all") {
-      filters.location_city = selectedLocation;
-    }
-
-    if (experienceLevel !== "all") {
-      filters.experience_level = experienceLevel;
-    }
-
-    if (feeType) {
-      filters.fee_type = feeType;
-    }
-
-    if (maxFee > 0) {
-      filters.max_fee = maxFee;
-    }
-
-    if (minRating > 0) {
-      filters.min_rating = minRating;
-    }
-
-    if (sortBy !== "all") {
-      filters.sort_by = sortBy;
-      filters.sort_order = sortOrder;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    API.Advocate.searchAdvocates(filters)
-      .then((res) => {
-        const data = res.data.map((item: any) => ({
-          advocate_id: item.advocate_id,
-          name: item.name || item.user?.name || "Unknown",
-          avatar: item.image || item.user?.image || "/placeholder.svg",
-          location: item.location_city || "",
-          bio: item.bio || "",
-          specializations: item.specializations || [],
-          experience: item.experience_years || "",
-          rating: item.average_rating || 0,
-          casesHandled: item.total_ratings || 0,
-          consultationFee: item.fee_structure?.Consultation || 0,
-          verified: item.availability_status || false,
-          languages: item.language_preferences || [],
-        }));
-        setAdvocates(data);
-      })
-      .catch((err) => {
-        const message =
-          err?.response?.data?.error || err.message || "Failed to fetch advocates.";
-        setError(message);
-        toast({
-          title: "Error",
-          description: message,
-          variant: "destructive",
-        });
-        setAdvocates([]);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
- // frontend-integration 
-// main
-  const [minRating, setMinRating] = useState<number>(0);
-  const [maxFee, setMaxFee] = useState<number>(0);
-  const [feeType, setFeeType] = useState<string>("Consultation");
-  const [experienceLevel, setExperienceLevel] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<string>("");
-  const [sortOrder, setSortOrder] = useState<string>("asc");
-  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
-  const [selectedAdvocate, setSelectedAdvocate] = useState<Advocate | null>(
-    null
-  );
-  const [slots, setSlots] = useState<any[]>([]);
-  const [slotsLoading, setSlotsLoading] = useState(false);
-  const [slotsError, setSlotsError] = useState<string | null>(null);
-  const [selectedSlot, setSelectedSlot] = useState<any | null>(null);
-  const [reason, setReason] = useState("");
-  const [booking, setBooking] = useState(false);
-  const [bookingSuccess, setBookingSuccess] = useState<any | null>(null);
-  const [bookingError, setBookingError] = useState<string | null>(null);
-  const searchParams = useSearchParams();
-  const router = useRouter();
   // Fetch advocates from backend API
   const fetchAdvocates = async (filters: any = {}) => {
     setIsLoading(true);
@@ -227,7 +123,6 @@ export default function AdvocatesPage() {
     try {
       console.log("Sending API request with filters:", filters);
       const res = await API.Advocate.searchAdvocates(filters);
-      // Map backend response to Advocate[]
       console.log("API Response:", res.data);
 
       // Check if data exists and is an array
@@ -269,6 +164,7 @@ export default function AdvocatesPage() {
       setIsLoading(false);
     }
   };
+
   // Separate effect just for URL search parameter on initial load
   useEffect(() => {
     const urlSearch = searchParams?.get("search");
@@ -345,10 +241,8 @@ export default function AdvocatesPage() {
 
     // Cleanup timeout on effect dependency changes
     return () => clearTimeout(handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-// main
   }, [
-    debouncedSearch,
+    searchQuery,
     selectedSpecialization,
     selectedLocation,
     experienceLevel,
@@ -376,25 +270,25 @@ export default function AdvocatesPage() {
   };
 
   const handleSubmitRating = async () => {
-    // if (!selectedAdvocateId) return;
-    // try {
-    //   await API.Advocate.rateAdvocate({
-    //     advocate_id: selectedAdvocateId,
-    //     rating: ratingValue,
-    //     comment: ratingComment,
-    //   });
-    //   toast({
-    //     title: "Thank you!",
-    //     description: "Your rating has been submitted.",
-    //   });
-    //   setOpenRateDialog(false);
-    // } catch (err: any) {
-    //   toast({
-    //     title: "Error",
-    //     description: err?.response?.data?.error || "Failed to submit rating.",
-    //     variant: "destructive",
-    //   });
-    // }
+    if (!selectedAdvocateId) return;
+    try {
+      await API.Advocate.rateAdvocate({
+        advocate_id: selectedAdvocateId,
+        rating: ratingValue,
+        comment: ratingComment,
+      });
+      toast({
+        title: "Thank you!",
+        description: "Your rating has been submitted.",
+      });
+      setOpenRateDialog(false);
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err?.response?.data?.error || "Failed to submit rating.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -404,135 +298,142 @@ export default function AdvocatesPage() {
         <h1 className="text-3xl font-bold mb-6">Find Legal Advocates</h1>
 
         {/* Search and Filters */}
-        { /*frontend-translation*/}
-        <div className="flex flex-col md:flex-row md:items-end gap-5 mb-10 flex-wrap bg-card p-6 rounded-xl shadow-md border border-border">
-          {/* Search */}
-          <div className="flex-1 relative min-w-[240px]">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+        <div className="mb-10">
+          <div className="flex flex-col md:flex-row md:items-end gap-5 bg-card p-6 rounded-xl shadow-md border border-border flex-wrap">
+            <div className="flex-1 relative min-w-[240px]">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Search by name, specialization, or location..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                  }
+                }}
+                className="pl-10 w-full shadow-sm focus:ring-2 focus:ring-primary/30 transition-all"
+              />
+            </div>
+
+            {/* Specialization */}
+            <Select
+              value={selectedSpecialization}
+              onValueChange={setSelectedSpecialization}
+            >
+              <SelectTrigger className="w-full min-w-[160px] md:w-[180px] bg-background shadow-sm">
+                <SelectValue placeholder="Specialization" />
+              </SelectTrigger>
+              <SelectContent>
+                {SPECIALIZATION_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Location */}
+            <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+              <SelectTrigger className="w-full min-w-[130px] md:w-[150px] bg-background shadow-sm">
+                <SelectValue placeholder="Location" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Locations</SelectItem>
+                <SelectItem value="Mumbai">Mumbai</SelectItem>
+                <SelectItem value="Delhi">Delhi</SelectItem>
+                <SelectItem value="Chennai">Chennai</SelectItem>
+                <SelectItem value="Bangalore">Bangalore</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Experience Level */}
+            <Select value={experienceLevel} onValueChange={setExperienceLevel}>
+              <SelectTrigger className="w-full min-w-[130px] md:w-[150px] bg-background shadow-sm">
+                <SelectValue placeholder="Experience Level" />
+              </SelectTrigger>
+              <SelectContent>
+                {EXPERIENCE_LEVEL_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Fee Type */}
+            <Select value={feeType} onValueChange={setFeeType}>
+              <SelectTrigger className="w-full min-w-[120px] md:w-[140px] bg-background shadow-sm">
+                <SelectValue placeholder="Fee Type" />
+              </SelectTrigger>
+              <SelectContent>
+                {FEE_TYPE_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Max Fee */}
             <Input
-              type="text"
-              placeholder="Search by name..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 w-full shadow-sm focus:ring-2 focus:ring-primary/30 transition-all"
+              type="number"
+              min={0}
+              placeholder="Max Fee"
+              value={maxFee === 0 ? "" : maxFee}
+              onChange={(e) => setMaxFee(Number(e.target.value))}
+              className="w-full min-w-[100px] md:w-[110px] bg-background text-foreground shadow-sm text-center"
             />
+
+            {/* Min Rating */}
+            <Input
+              type="number"
+              min={0}
+              max={5}
+              step={0.1}
+              placeholder="Min Rating"
+              value={minRating === 0 ? "" : minRating}
+              onChange={(e) => setMinRating(Number(e.target.value))}
+              className="w-full min-w-[100px] md:w-[110px] bg-background text-foreground shadow-sm text-center"
+            />
+
+            {/* Sort By */}
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-full min-w-[140px] md:w-[160px] bg-background shadow-sm">
+                <SelectValue placeholder="Sort By" />
+              </SelectTrigger>
+              <SelectContent>
+                {SORT_BY_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Sort Order */}
+            <Select
+              value={sortOrder}
+              onValueChange={(value) => {
+                if (value === "asc" || value === "desc") {
+                  setSortOrder(value);
+                }
+              }}
+            >
+              <SelectTrigger className="w-full min-w-[100px] md:w-[120px] bg-background shadow-sm">
+                <SelectValue placeholder="Sort Order" />
+              </SelectTrigger>
+              <SelectContent>
+                {SORT_ORDER_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-
-          {/* Specialization */}
-          <Select
-            value={selectedSpecialization}
-            onValueChange={setSelectedSpecialization}
-          >
-            <SelectTrigger className="w-full min-w-[160px] md:w-[180px] bg-background shadow-sm">
-              <SelectValue placeholder="Specialization" />
-            </SelectTrigger>
-            <SelectContent>
-              {SPECIALIZATION_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {/* Location */}
-          <Select value={selectedLocation} onValueChange={setSelectedLocation}>
-            <SelectTrigger className="w-full min-w-[130px] md:w-[150px] bg-background shadow-sm">
-              <SelectValue placeholder="Location" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Locations</SelectItem>
-              <SelectItem value="Mumbai">Mumbai</SelectItem>
-              <SelectItem value="Delhi">Delhi</SelectItem>
-              <SelectItem value="Chennai">Chennai</SelectItem>
-              <SelectItem value="Bangalore">Bangalore</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Experience Level */}
-          <Select value={experienceLevel} onValueChange={setExperienceLevel}>
-            <SelectTrigger className="w-full min-w-[130px] md:w-[150px] bg-background shadow-sm">
-              <SelectValue placeholder="Experience Level" />
-            </SelectTrigger>
-            <SelectContent>
-              {EXPERIENCE_LEVEL_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {/* Fee Type */}
-          <Select value={feeType} onValueChange={setFeeType}>
-            <SelectTrigger className="w-full min-w-[120px] md:w-[140px] bg-background shadow-sm">
-              <SelectValue placeholder="Fee Type" />
-            </SelectTrigger>
-            <SelectContent>
-              {FEE_TYPE_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {/* Max Fee */}
-          <Input
-            type="number"
-            min={0}
-            placeholder="Max Fee"
-            value={maxFee === 0 ? "" : maxFee}
-            onChange={(e) => setMaxFee(Number(e.target.value))}
-            className="w-full min-w-[100px] md:w-[110px] bg-background text-foreground shadow-sm text-center"
-          />
-
-          {/* Min Rating */}
-          <Input
-            type="number"
-            min={0}
-            max={5}
-            step={0.1}
-            placeholder="Min Rating"
-            value={minRating === 0 ? "" : minRating}
-            onChange={(e) => setMinRating(Number(e.target.value))}
-            className="w-full min-w-[100px] md:w-[110px] bg-background text-foreground shadow-sm text-center"
-          />
-
-          {/* Sort By */}
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-full min-w-[140px] md:w-[160px] bg-background shadow-sm">
-              <SelectValue placeholder="Sort By" />
-            </SelectTrigger>
-            <SelectContent>
-              {SORT_BY_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {/* Sort Order */}
-          <Select
-            value={sortOrder}
-            onValueChange={(value) => {
-              if (value === "asc" || value === "desc") {
-                setSortOrder(value);
-              }
-            }}
-          >
-            <SelectTrigger className="w-full min-w-[100px] md:w-[120px] bg-background shadow-sm">
-              <SelectValue placeholder="Sort Order" />
-            </SelectTrigger>
-            <SelectContent>
-              {SORT_ORDER_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
 
         {/* Rate Dialog */}
@@ -556,29 +457,6 @@ export default function AdvocatesPage() {
                 placeholder="Add a comment (optional)"
                 value={ratingComment}
                 onChange={(e) => setRatingComment(e.target.value)}
-{ /*frontend-translation*/}
-                { /*main*/}
-        <div className="mb-10">
-          <div className="flex flex-col md:flex-row md:items-end gap-5 bg-card p-6 rounded-xl shadow-md border border-border flex-wrap">
-            {" "}
-            <div className="flex-1 relative min-w-[240px]">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                type="text"
-                placeholder="Search by name, specialization, or location..."
-                value={searchQuery}
-                onChange={(e) => {
-                  // Update the search query without triggering immediate search
-                  setSearchQuery(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                  // Prevent form submission on Enter key
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                  }
-                }}
-                className="pl-10 w-full shadow-sm focus:ring-2 focus:ring-primary/30 transition-all"
-{ /*main*/}
               />
             </div>
             <DialogFooter>

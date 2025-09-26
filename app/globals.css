@@ -1,0 +1,480 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+
+/* Custom thin scrollbar styles */
+.custom-scrollbar {
+  /* For WebKit browsers (Chrome, Safari, Edge) */
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #888 transparent; /* For Firefox */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px; /* Width of vertical scrollbar */
+  height: 6px; /* Height of horizontal scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent; /* Track color */
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #888; /* Scrollbar thumb color */
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker on hover */
+}
+
+/* For dark theme variant */
+.custom-scrollbar-dark {
+  scrollbar-width: thin;
+  scrollbar-color: #555 transparent;
+}
+
+.custom-scrollbar-dark::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar-dark::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.custom-scrollbar-dark::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.custom-scrollbar-dark::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+/* Ultra thin variant (4px) */
+.custom-scrollbar-ultra-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
+
+.custom-scrollbar-ultra-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.custom-scrollbar-ultra-thin::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 2px;
+}
+
+.custom-scrollbar-ultra-thin::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 2px;
+  transition: background 0.2s ease;
+}
+
+.custom-scrollbar-ultra-thin::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+
+.sidebar-bg {
+  background: #f2f2f2;
+  background: linear-gradient(90deg, rgba(242, 242, 242, 1) 0%, rgba(242, 242, 242, 1) 82%, rgba(255, 255, 255, 0) 100%);
+}
+
+.dark .sidebar-bg {
+  background: linear-gradient(90deg, #18181b 0%, #232326 82%, rgba(24, 24, 27, 0) 100%)
+}
+
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* .sidebar-blur-right { */
+/* position: absolute;
+  top: 0;
+  right: -32px;
+  width: 32px;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(to right, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.1) 100%) !important;
+  filter: blur(12px);
+  z-index: 51;
+}
+@media (prefers-color-scheme: dark) {
+  .sidebar-blur-right {
+    background: linear-gradient(to right, rgba(24,24,24,0.7) 0%, rgba(24,24,24,0.1) 100%) !important;
+  }
+} */
+
+.forms-bg {
+  background: #f2f2f2;
+  background: radial-gradient(circle, rgba(242, 242, 242, 1) 0%, rgba(242, 242, 242, 1) 81%, rgba(242, 242, 242, 0) 100%);
+}
+
+@layer utilities {
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+}
+
+/* Hide Google Translate default widget */
+#google_translate_element {
+  position: fixed !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+
+#google_translate_element * {
+  display: none !important;
+}
+
+/* But allow the select element to function */
+#google_translate_element .goog-te-combo {
+  display: block !important;
+  position: absolute !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.goog-te-banner-frame {
+  display: none !important;
+}
+
+.goog-te-menu-frame {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+}
+
+.goog-te-combo {
+  display: none !important;
+}
+
+/* Fix the layout after Google Translate is applied */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+
+body.goog-te-t0 {
+  top: 0 !important;
+}
+
+.goog-te-balloon-frame {
+  display: none !important;
+}
+
+/* Google Translate loading indicator */
+.goog-te-spinner-pos {
+  display: none !important;
+}
+
+.goog-te-banner-frame {
+  display: none !important;
+}
+
+.goog-te-menu-frame {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+}
+
+.goog-te-combo {
+  display: none !important;
+}
+
+/* Fix the layout after Google Translate is applied */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+
+body.goog-te-t0 {
+  top: 0 !important;
+}
+
+.goog-te-balloon-frame {
+  display: none !important;
+}
+
+/* Ensure proper styling when page is translated */
+.translated-rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.translated-ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+/* RTL Support for specific components */
+[dir="rtl"] .flex {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .space-x-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+  margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+[dir="rtl"] .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+  margin-right: calc(1rem * var(--tw-space-x-reverse));
+  margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+/* Keep logo and brand elements LTR */
+[dir="rtl"] .logo-container {
+  direction: ltr;
+}
+
+/* Google Translate loading indicator */
+.goog-te-spinner-pos {
+  display: none !important;
+}
+
+/* Google Translate Widget Styles - Complete hiding and integration */
+.goog-te-banner-frame,
+.goog-te-menu-frame,
+.goog-te-ftab,
+.goog-te-balloon-frame {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+.goog-te-combo {
+  visibility: visible !important;
+  display: block !important;
+}
+
+#google_translate_element {
+  position: fixed !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  width: 200px !important;
+  height: 50px !important;
+  opacity: 0 !important;
+  pointer-events: all !important; /* Allow interaction but keep hidden */
+  z-index: -1 !important;
+  overflow: hidden !important;
+}
+
+/* Keep the select element functional */
+#google_translate_element select {
+  opacity: 1 !important;
+  position: relative !important;
+  display: block !important;
+  visibility: visible !important;
+}
+
+.skiptranslate {
+  display: none !important;
+}
+
+.goog-te-gadget {
+  display: none !important;
+}
+
+/* Ensure body positioning doesn't change */
+body {
+  top: 0 !important;
+  position: static !important;
+  margin-top: 0 !important;
+}
+
+body.goog-te-t0 {
+  top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Hide all Google Translate UI elements except the select */
+.goog-te-gadget-simple {
+  background: transparent !important;
+  border: none !important;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value {
+  display: none !important;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value:before {
+  display: none !important;
+}
+
+/* RTL Support */
+.translated-rtl {
+  direction: rtl !important;
+}
+
+.translated-ltr {
+  direction: ltr !important;
+}
+
+/* Smooth transitions for direction changes */
+html {
+  transition: direction 0.3s ease;
+}
+
+/* Ensure consistent font rendering across translations */
+body[class*="goog-te-"] {
+  font-family: inherit !important;
+}
+
+/* Fix any translation artifacts */
+.goog-te-spinner-pos {
+  display: none !important;
+}
+
+/* Notification and popup suppression */
+div[id*="goog-te"]:not(#google_translate_element) {
+  display: none !important;
+}
+
+/* Additional cleanup for iframe elements */
+iframe.goog-te-banner-frame,
+iframe.goog-te-menu-frame {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+/* Hide restore link and other UI elements */
+.goog-te-banner-frame .restore,
+.goog-te-banner .restore {
+  position: absolute !important;
+  left: -9999px !important;
+  opacity: 0 !important;
+}
+
+/* Ensure the translation tools remain functional but hidden */
+.goog-te-gadget-simple .goog-te-combo {
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+}
+
+/* Force hide Google Translate top bar */
+body {
+  top: 0px !important;
+}
+
+/* Hide Google Translate elements that might interfere with reset */
+.goog-te-banner-frame {
+  display: none !important;
+}
+
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+
+/* Additional hiding for any Google Translate overlays */
+.goog-te-menu-frame {
+  display: none !important;
+}
+
+body > .skiptranslate {
+  display: none !important;
+}
+
+/* Force reset of any Google Translate body modifications */
+body[style*="position"] {
+  position: static !important;
+  top: 0 !important;
+}
+
+
